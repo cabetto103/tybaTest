@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'usuarios',
     'funciones',
     'logs',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [

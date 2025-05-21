@@ -8,8 +8,24 @@ from logs.util import crear_log_restaurantes
 import requests
 
 class ListaRestaurantesView(APIView):
+    """
+    API endpoint para consultar los restaurantes cercanos en una ciudad
+    o coordendas especificas.
+
+    GET:
+        Consulta Un servicio externo que nos restorna infomacion de restaurantes
+    """
     permission_classes = [IsAuthenticated]
-    def get(self, request):      
+    def get(self, request): 
+        """
+        Consulta los restaurantes disponibles
+
+        Args:
+            request (HttpRequest): Solicitud HTTP POST con validacion de autorizacion.
+
+        Returns:
+            Response: Codigos de status HTTP 201, o errores con status HTTP 400 y un listado de restaurantes
+        """     
         try:
             ciudad = request.query_params.get('ciudad')
             lat = request.query_params.get('latitud')
@@ -38,7 +54,7 @@ class ListaRestaurantesView(APIView):
             query = f"""
             [out:json];
             (
-            node["amenity"="restaurant"](around:3000,{lat},{lon});
+            node["amenity"="restaurant"](around:2000,{lat},{lon});
             );
             out;
             """
@@ -51,12 +67,12 @@ class ListaRestaurantesView(APIView):
                 direccion = element.get("tags", {}).get("addr:full", "Desconocida")
                 restaurantes.append({
                     "nombre": nombre,
-                    "direccion": direccion,
+                    # "direccion": direccion,
                     "lat": element.get("lat"),
                     "lon": element.get("lon")
                 })           
         except ValueError as e:
             return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
         crear_log_restaurantes(request.user, tipo_accion, {"Ciudad":ciudad,"latitud":lat,"longitud":lon} ,{"restaurantes":restaurantes})
-        return Response(restaurantes)
+        return Response({"lista_restaurantes": restaurantes}, status=status.HTTP_200_OK)
     

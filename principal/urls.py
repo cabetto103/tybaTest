@@ -17,10 +17,25 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from django.contrib.auth import views as auth_views
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+# Se implementa este codigo para generar la documentacion por medio de swagger
+schema_view = get_schema_view(
+   openapi.Info(
+      title="API REST Backend Engineer test",
+      default_version='v1',
+      description="Documentación Swagger de la API REST Backend Engineer test",
+   ),
+   public=True,
+   permission_classes=(permissions.AllowAny,),
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/usuarios/', include('usuarios.urls')),  
     path('api/funciones/', include('funciones.urls')),
     path('api/logs/', include('logs.urls')),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 ]

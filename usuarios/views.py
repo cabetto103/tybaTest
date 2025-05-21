@@ -15,9 +15,27 @@ class RegisterView(generics.CreateAPIView):
 
        
 class LogoutView(APIView):
+    """
+    API endpoint para gestionar el Logout.
+
+    POST:
+        Da de baja el token pero validando que el usuario que lo hace 
+        cierre su propia sesion
+    """
+
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        """
+        Realiza la el logout y deshabilita el token.
+
+        Args:
+            request (HttpRequest): Solicitud HTTP POST con datos JSON.
+            {"refresh":"token"}
+
+        Returns:
+            Response: Codigos de status HTTP 201, o errores con status HTTP 400.
+        """
         refresh_token = request.data.get("refresh")
 
         if not refresh_token:
