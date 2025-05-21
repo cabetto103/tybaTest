@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  django_app:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres_db
+    environment:
+      - POSTGRES_USER=tybauser
+      - POSTGRES_PASSWORD=typassword
+      - POSTGRES_DB=tybadb
+      - DB_HOST=postgres_db
+      - DB_NAME=tybadb
+      - DB_USER=tybauser
+      - DB_PASSWORD=typassword
+
+  postgres_db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: tybauser
+      POSTGRES_PASSWORD: typassword
+      POSTGRES_DB: tybadb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+
+volumes:
+  pgdata:
